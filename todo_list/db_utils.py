@@ -15,6 +15,7 @@ def connect_to_db(db_path=DB_PATH):
 
 def add_item(item):
     try:
+        print('item: ', item)
         conn = connect_to_db()
         cur = conn.cursor()
         cur.execute(
