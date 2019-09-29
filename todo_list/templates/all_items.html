@@ -5,11 +5,11 @@
 {% if items %}
   <table border="1">
     <tr>
-      <th>Task</th><th>Status</th>
+      <th>Task</th><th>Status</th><th></th>
     </tr>
     {% for item in items %}
       <tr>
-        <td>{{ item[0] }}</td><td>{{ item[1] }}</td>
+        <td>{{ item[0] }}</td><td>{{ item[1] }}</td><td><a href="{{ url_for('update_status', task_name=item[0]) }}">Update status</a></td>
       </tr>
     {% endfor %}
   </table>
@@ -17,5 +17,5 @@
   <h1> There's no items in the list </h1>
 {% endif %}
 
-    <a href="/items/new">Add new task</a>
+    <a href="{{ url_for('add_new_task') }}">Add new task</a>
 {% endblock content%}

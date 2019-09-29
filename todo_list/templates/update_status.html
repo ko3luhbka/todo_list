@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Update task status{% endblock title%}
+{% block subtitle %}Update task status{% endblock subtitle%}
+{% block content %}
+  <form method="POST" action="{{ url_for('update_status', task_name=task_name) }}">
+    {{ form.csrf_token }}
+    {{ form.status.label }} {{ form.status }}
+    <input type="submit" value="Update">
+
+<div>
+  <a href="/items/all">All tasks</a>
+</div>
+
+{% endblock content%}

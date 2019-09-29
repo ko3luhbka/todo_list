@@ -1,9 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import (
+    StringField,
+    SelectField,
+)
 from wtforms.validators import (
     DataRequired,
     Length,
 )
+from todo_list.todo_task import TaskStatus
+
 
 class AddToDoTaskForm(FlaskForm):
     item = StringField(
@@ -17,4 +22,12 @@ class AddToDoTaskForm(FlaskForm):
             )
         ]
     )
-    
+
+
+class UpdateStatusForm(FlaskForm):
+    status = SelectField(
+        label='Status: ',
+        choices=[
+            (status.name, status.value) for status in TaskStatus
+        ]
+    )

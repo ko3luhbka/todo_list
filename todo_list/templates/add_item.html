@@ -3,21 +3,21 @@
 {% block subtitle %}Add new task{% endblock subtitle%}
 {% block content %}
   <form method="POST" action="/items/new">
-  {{ form.csrf_token }}
-  {{ form.item.label }} {{ form.item(size=20) }}
-<input type="submit" value="Add">
+    {{ form.csrf_token }}
+    {{ form.item.label }} {{ form.item(size=20) }}
+    <input type="submit" value="Add">
 
-{% for field in form if field != csrf_token %}
-  <div>
-  {% for error in field.errors %}
-    <p style="color:red">{{ error }}</p>
-  {% endfor %}
-{% endfor %}
-  </div>
-</form>
+    {% for field in form if field != csrf_token %}
+      <div>
+      {% for error in field.errors %}
+        <p style="color:red">{{ error }}</p>
+      {% endfor %}
+    {% endfor %}
+      </div>
+  </form>
 
 <div>
-  <a href="/items/all">All tasks</a>
+  <a href="{{ url_for('show_all_tasks') }}">All tasks</a>
 </div>
 
 {% endblock content%} 
