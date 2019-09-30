@@ -1,4 +1,5 @@
 import json
+import logging
 from flask import request, Response
 
 from todo_list import db_utils
@@ -11,7 +12,7 @@ def add_item() -> Response:
     item = req_data['item']
 
     res_data = db_utils.add_item(item)
-    print(res_data)
+    logging.debug('res_data: %s', res_data)
 
     if res_data is None:
         response = Response(

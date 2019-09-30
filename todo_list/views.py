@@ -40,7 +40,7 @@ def add_new_task():
             items=db_utils.get_all_items()['items']
         )
     
-    print(form.errors)
+    logging.info(form.errors)
     return render_template(
         'add_item.html',
         form=form
@@ -53,7 +53,11 @@ def update_status(task_name):
     form = UpdateStatusForm(status=TaskStatus(current_status).name)
 
     if request.method == 'GET':
-        print(f'=== current status of item [{task_name}]: [{current_status}]')
+        logging.info(
+            'current status of item [%s]: [%s]',
+            task_name,
+            current_status
+        )
         return render_template(
             'update_status.html',
             form=form,
@@ -63,9 +67,17 @@ def update_status(task_name):
     if request.method == 'POST':
         new_status = TaskStatus[form.status.data].value
         if new_status == current_status:
-            print(f'=== status of item [{task_name}] didnt change: [{current_status}]')
+            logging.info(
+                'status of item [%s] didnt change: [%s]',
+                task_name,
+                current_status
+            )
         else:
-            print(f'=== new status of item [{task_name}]: [{new_status}]')
+            logging.info(
+                'new status of item [%s]: [%s]',
+                task_name,
+                new_status
+                )
             db_utils.update_status(
                 task_name,
                 new_status

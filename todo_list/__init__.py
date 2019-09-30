@@ -1,6 +1,12 @@
 import os
+import logging
 
 from flask import Flask
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s: %(message)s',
+    level=logging.DEBUG,
+    )
 
 
 app = Flask(__name__)

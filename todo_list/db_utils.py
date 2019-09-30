@@ -1,4 +1,5 @@
 import os
+import logging
 import sqlite3
 
 from todo_list.todo_task import TaskStatus
@@ -12,9 +13,9 @@ def connect_to_db(db_path=DB_PATH):
 
 
 def add_item(item):
-    print(f'=== adding item [{item}]')
+    logging.info('adding item [%s]', item)
     try:
-        print('=== item: ', item)
+        logging.info('item: %s', item)
         conn = connect_to_db()
         cur = conn.cursor()
         cur.execute(
@@ -25,12 +26,12 @@ def add_item(item):
         return {'item': item, 'status': TaskStatus.NOTSTARTED.value}
 
     except Exception as e:
-        print('Error: ', e)
+        logging.error('Error : %s', e)
         return None
 
 
 def get_all_items():
-    print('=== getting all items')
+    logging.info('getting all items')
     try:
         conn = connect_to_db()
         cur = conn.cursor()
@@ -39,12 +40,12 @@ def get_all_items():
         return {'count: ': len(rows), 'items': rows}
 
     except Exception as e:
-        print('=== Error: ', e)
+        logging.error('Error : %s', e)
         return None
 
 
 def get_item(item):
-    print(f'=== getting item [{item}]')
+    logging.info('getting item [%s]', item)
     try:
         conn = connect_to_db()
         cur = conn.cursor()
@@ -52,12 +53,16 @@ def get_item(item):
         status = cur.fetchone()[0]
         return status
     except Exception as e:
-        print('=== Error: ', e)
+        logging.error('Error : %s', e)
         return None
 
 
 def update_status(item, status):
-    print(f'=== updating status of item [{item}] to [{status}]')
+    logging.info(
+        'updating status of item [%s] to [%s]',
+        item,
+        status
+    )
     try:
         conn = connect_to_db()
         cur = conn.cursor()
@@ -66,12 +71,12 @@ def update_status(item, status):
         return {item: status}
     
     except Exception as e:
-        print('Error: ', e)
+        logging.error('Error: %s', e)
         return None
 
 
 def delete_item(item):
-    print(f'=== deleting item [{item}]')
+    logging.info('deleting item [%s]', item)
     try:
         conn = connect_to_db()
         cur = conn.cursor()
@@ -79,5 +84,5 @@ def delete_item(item):
         conn.commit()
         return {'item': item}
     except Exception as e:
-        print('=== Error: ', e)
+        logging.error('Error: %s', e)
         return None
