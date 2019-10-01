@@ -1,0 +1,23 @@
+[flake8]
+ignore = 
+    # D100 Missing docstring in public module
+    D100,
+    # C101 Coding magic comment not found
+    C101,
+    # WPS412 Found `__init__.py` module with logic
+    412,
+    # D104 Missing docstring in public package
+    D104,
+    # WPS336 Found explicit string concat
+    WPS336,
+    
+
+
+# flake8-import-order settings
+application-import-names = todo_list, tests
+import-order-style = google
+
+# flake8-quotes settings
+inline-quotes = "
+
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist

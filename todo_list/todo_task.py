@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class TaskStatus(Enum):
-    NOTSTARTED = 'Not Started'
-    INPROGRESS = 'In Progress'
-    COMPLETED = 'Completed'
+    """Class representing ToDo list task statuses."""
+
+    not_started = "Not Started"
+    in_progress = "In Progress"
+    completed = "Completed"

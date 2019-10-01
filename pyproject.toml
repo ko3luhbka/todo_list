@@ -9,6 +9,10 @@ python = "3.7.4"
 flask = "^1.1"
 wemake-python-styleguide = "^0.12.5"
 flask-wtf = "^0.14.2"
+flake8-import-order = "^0.18.1"
+flake8_docstrings = "^1.5"
+flake8-builtins = "^1.4"
+flake8-quotes = "^2.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"

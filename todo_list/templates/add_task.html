@@ -2,9 +2,9 @@
 {% block title %}Add new task{% endblock title%}
 {% block subtitle %}Add new task{% endblock subtitle%}
 {% block content %}
-  <form method="POST" action="/items/new">
+  <form method="POST" action="/tasks/new">
     {{ form.csrf_token }}
-    {{ form.item.label }} {{ form.item(size=20) }}
+    {{ form.task.label }} {{ form.task(size=20) }}
     <input type="submit" value="Add">
 
     {% for field in form if field != csrf_token %}

@@ -1,12 +1,9 @@
 import logging
 
 from flask import (
-    render_template, 
-    redirect, 
-    request, 
+    render_template,
+    request,
     flash,
-    get_flashed_messages,
-    url_for,
 )
 
 from todo_list import app
@@ -18,74 +15,79 @@ from todo_list.forms import (
 from todo_list.todo_task import TaskStatus
 
 
-@app.route('/items/all')
+@app.route("/tasks/all")
 def show_all_tasks():
-    res_data = db_utils.get_all_items()
+    """Show all todo list tasks"""
+
+    res_data = db_utils.get_all_tasks()
 
     return render_template(
-        'all_items.html',
-        items=res_data['items']
+        "all_tasks.html",
+        tasks=res_data["tasks"]
     )
 
 
-@app.route('/items/new', methods=['GET', 'POST'])
+@app.route("/tasks/new", methods=["GET", "POST"])
 def add_new_task():
+    """Add new todo list task"""
+
     form = AddToDoTaskForm()
     if form.validate_on_submit():
-        task = form.item.data
-        db_utils.add_item(task)
+        task = form.task.data
+        db_utils.add_task(task)
         flash(f"Task '{task}' was added successfuly")
         return render_template(
-            'all_items.html',
-            items=db_utils.get_all_items()['items']
+            "all_tasks.html",
+            tasks=db_utils.get_all_tasks()["tasks"]
         )
-    
+
     logging.info(form.errors)
     return render_template(
-        'add_item.html',
-        form=form
+        "add_task.html",
+        form=form,
     )
 
 
-@app.route('/items/update/<task_name>', methods=['GET', 'POST'])
+@app.route("/tasks/update/<task_name>", methods=["GET", "POST"])
 def update_status(task_name):
-    current_status = db_utils.get_item(task_name)
+    """Update todo list task status"""
+
+    current_status = db_utils.get_task(task_name)
     form = UpdateStatusForm(status=TaskStatus(current_status).name)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         logging.info(
-            'current status of item [%s]: [%s]',
+            "current status of task [%s]: [%s]",
             task_name,
-            current_status
+            current_status,
         )
         return render_template(
-            'update_status.html',
+            "update_status.html",
             form=form,
             task_name=task_name,
         )
 
-    if request.method == 'POST':
+    if request.method == "POST":
         new_status = TaskStatus[form.status.data].value
         if new_status == current_status:
             logging.info(
-                'status of item [%s] didnt change: [%s]',
+                "status of task [%s] didnt change: [%s]",
                 task_name,
-                current_status
+                current_status,
             )
         else:
             logging.info(
-                'new status of item [%s]: [%s]',
+                "new status of task [%s]: [%s]",
                 task_name,
-                new_status
-                )
+                new_status,
+            )
             db_utils.update_status(
                 task_name,
-                new_status
+                new_status,
             )
             flash(f"The status of task '{task_name}' is set to '{new_status}'")
-        
+
         return render_template(
-            'all_items.html',
-            items=db_utils.get_all_items()['items']
+            "all_tasks.html",
+            tasks=db_utils.get_all_tasks()["tasks"],
         )
-    

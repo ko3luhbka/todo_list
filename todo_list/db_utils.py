@@ -4,7 +4,7 @@ import sqlite3
 
 from todo_list.todo_task import TaskStatus
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'todo.db')
+DB_PATH = os.path.join(os.path.dirname(__file__), "todo.db")
 
 
 def connect_to_db(db_path=DB_PATH):
@@ -12,77 +12,86 @@ def connect_to_db(db_path=DB_PATH):
     return conn
 
 
-def add_item(item):
-    logging.info('adding item [%s]', item)
+def add_task(task):
+    """Add new todo list task"""
+
+    logging.info("adding task [%s]", task)
     try:
-        logging.info('item: %s', item)
         conn = connect_to_db()
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO items(item, status) VALUES(?,?)',
-            (item, TaskStatus.NOTSTARTED.value)
+            "INSERT INTO tasks(task, status) VALUES(?,?)",
+            (task, TaskStatus.not_started.value),
         )
         conn.commit()
-        return {'item': item, 'status': TaskStatus.NOTSTARTED.value}
+        return {"task": task, "status": TaskStatus.not_started.value}
 
-    except Exception as e:
-        logging.error('Error : %s', e)
+    except Exception as err:
+        logging.error("Error : %s", err)
         return None
 
 
-def get_all_items():
-    logging.info('getting all items')
+def get_all_tasks():
+    """Get all todo list tasks"""
+
+    logging.info("getting all tasks")
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute('select * from items')
+        cur.execute("select * from tasks")
         rows = cur.fetchall()
-        return {'count: ': len(rows), 'items': rows}
+        return {"count: ": len(rows), "tasks": rows}
 
-    except Exception as e:
-        logging.error('Error : %s', e)
+    except Exception as err:
+        logging.error("Error : %s", err)
         return None
 
 
-def get_item(item):
-    logging.info('getting item [%s]', item)
+def get_task(task):
+    """Get one todo list task by name"""
+
+    logging.info("getting task [%s]", task)
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute(f"select status from items where item='{item}'")
+        cur.execute(f"select status from tasks where task='{task}'")
         status = cur.fetchone()[0]
         return status
-    except Exception as e:
-        logging.error('Error : %s', e)
+    except Exception as err:
+        logging.error("Error : %s", err)
         return None
 
 
-def update_status(item, status):
+def update_status(task, status):
+    """Update todo list task status"""
+
     logging.info(
-        'updating status of item [%s] to [%s]',
-        item,
-        status
+        "updating status of task [%s] to [%s]",
+        task,
+        status,
     )
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute('update items set status=? where item=?', (status, item))
+        cur.execute("update tasks set status=? where task=?", (status, task))
         conn.commit()
-        return {item: status}
+        return {task: status}
     
-    except Exception as e:
-        logging.error('Error: %s', e)
+    except Exception as err:
+        logging.error("Error: %s", err)
         return None
 
 
-def delete_item(item):
-    logging.info('deleting item [%s]', item)
+def delete_task(task):
+    """Delete task by name"""
+
+    logging.info("deleting task [%s]", task)
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute('delete from items where item=?', (item,))
+        cur.execute("delete from tasks where task=?", (task,))
         conn.commit()
-        return {'item': item}
-    except Exception as e:
-        logging.error('Error: %s', e)
+        return {"task": task}
+    except Exception as err:
+        logging.error("Error: %s", err)
         return None
