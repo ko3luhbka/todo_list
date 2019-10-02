@@ -91,3 +91,16 @@ def update_status(task_name):
             "all_tasks.html",
             tasks=db_utils.get_all_tasks()["tasks"],
         )
+
+
+@app.route("/tasks/delete/<task_name>")
+def delete_task(task_name):
+    """Delete todo list task"""
+
+    db_utils.delete_task(task_name)
+    flash(f"Task '{task_name}' was deleted successfuly")
+
+    return render_template(
+            "all_tasks.html",
+            tasks=db_utils.get_all_tasks()["tasks"]
+        )

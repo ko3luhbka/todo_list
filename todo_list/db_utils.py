@@ -4,7 +4,10 @@ import sqlite3
 
 from todo_list.todo_task import TaskStatus
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "todo.db")
+DB_PATH = os.path.join(
+    os.path.dirname(__file__), 
+    "todo.db",
+)
 
 
 def connect_to_db(db_path=DB_PATH):
