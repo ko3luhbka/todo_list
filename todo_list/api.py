@@ -11,7 +11,7 @@ HTTP_STATUS_NOT_FOUND = 404
 HTTP_STATUS_BAD_REQUEST = 400
 
 @app.route("/api/task/new", methods=["POST"])
-def add_task() -> Response:
+def api_add_task() -> Response:
     """Add new todo list task"""
 
     req_data = request.get_json()
@@ -35,7 +35,7 @@ def add_task() -> Response:
 
 
 @app.route("/api/tasks/all")
-def get_all_tasks():
+def api_get_all_tasks():
     """Get all todo list tasks"""
 
     res_data = db_utils.get_all_tasks()
@@ -47,7 +47,7 @@ def get_all_tasks():
 
 
 @app.route("/api/task/status", methods=["GET"])
-def get_task():
+def api_get_task():
     """Get one todo list task by name"""
 
     task_name = request.args.get("name")
@@ -74,7 +74,7 @@ def get_task():
 
 
 @app.route("/api/task/update", methods=["PUT"])
-def update_status():
+def api_update_status():
     """Update todo list task status"""
 
     req_data = request.get_json()
@@ -97,7 +97,7 @@ def update_status():
 
 
 @app.route("/api/task/remove", methods=["DELETE"])
-def delete_task():
+def api_delete_task():
     """Delete task by name"""
 
     req_data = request.get_json()
