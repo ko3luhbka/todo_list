@@ -1,9 +1,9 @@
 import json
 import logging
-from flask import request, Response
 
-from todo_list import db_utils
-from todo_list import app
+from flask import Response, request
+
+from todo_list import app, db_utils
 
 MIMETYPE = "application/json"
 HTTP_STATUS_OK = 200

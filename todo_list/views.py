@@ -1,9 +1,8 @@
 import logging
 
-from flask import render_template, request, flash
+from flask import flash, render_template, request
 
-from todo_list import app
-from todo_list import db_utils
+from todo_list import app, db_utils
 from todo_list.forms import AddToDoTaskForm, UpdateStatusForm
 from todo_list.todo_task import TaskStatus
 
@@ -94,6 +93,6 @@ def delete_task(task_name):
     flash(f"Task '{task_name}' was deleted successfuly")
 
     return render_template(
-            "all_tasks.html",
-            tasks=db_utils.get_all_tasks()["tasks"]
+        "all_tasks.html",
+        tasks=db_utils.get_all_tasks()["tasks"]
     )

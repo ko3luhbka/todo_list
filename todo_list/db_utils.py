@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 import sqlite3
 
 from todo_list.todo_task import TaskStatus

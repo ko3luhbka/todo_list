@@ -1,12 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    SelectField,
-)
-from wtforms.validators import (
-    DataRequired,
-    Length,
-)
+from wtforms import SelectField, StringField
+from wtforms.validators import DataRequired, Length
+
 from todo_list.todo_task import TaskStatus
 
 
