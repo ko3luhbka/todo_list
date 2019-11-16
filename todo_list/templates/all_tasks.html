@@ -3,22 +3,25 @@
 {% block subtitle %}All tasks{% endblock subtitle%}
 {% block content %}
 {% if tasks %}
-  <table border="1">
-    <tr>
-      <th>Task</th><th>Status</th><th></th>
-    </tr>
+    <div class="tasks_container">tasks container
     {% for task in tasks %}
-      <tr>
-        <td>{{ task[0] }}</td>
-        <td>{{ task[1] }}</td>
-        <td><a href="{{ url_for('update_status', task_name=task[0]) }}">Edit</a></td>
-        <td><a href="{{ url_for('delete_task', task_name=task[0]) }}">Delete</a></td>
-      </tr>
-    {% endfor %}
-  </table>
-{% else %}
-  <h1> There's no tasks in the list </h1>
-{% endif %}
+        {% set task_name, task_status = task %}
+        <div class="task">
+            <p>{{ task_name }}</p>
+            <p>Status: {{ task_status }}</p>
+            <div class="button_container">
+                <a class="button"
+                    href="{{ url_for('update_status', task_name=task_name) }}">Edit</a>
+                <a class="button"
+                    href="{{ url_for('delete_task', task_name=task_name) }}">Delete</a>
+            </div>
+        </div>
 
-    <a href="{{ url_for('add_new_task') }}">Add new task</a>
+    {% endfor %}
+{% else %}
+    <h3> There are currently no tasks </h3>
+{% endif %}
+        <a class="button new_task_button" 
+        href="{{ url_for('add_new_task') }}">Add new task</a>
+    </div>
 {% endblock content%}

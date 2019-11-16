@@ -2,22 +2,19 @@
 {% block title %}Add new task{% endblock title%}
 {% block subtitle %}Add new task{% endblock subtitle%}
 {% block content %}
-  <form method="POST" action="/tasks/new">
-    {{ form.csrf_token }}
-    {{ form.task.label }} {{ form.task(size=20) }}
-    <input type="submit" value="Add">
-
     {% for field in form if field != csrf_token %}
-      <div>
-      {% for error in field.errors %}
-        <p style="color:red">{{ error }}</p>
-      {% endfor %}
+        {% for error in field.errors %}
+            <div class="error_msg">{{ error }}</div>
+        {% endfor %}
     {% endfor %}
-      </div>
-  </form>
+    <form method="POST" action="/tasks/new">
+        {{ form.csrf_token }}
+        <div>
+            {{ form.task.label }} {{ form.task(size=40) }}
+            <input type="submit" value="Add">
+        </div>
+    </form>
 
-<div>
-  <a href="{{ url_for('show_all_tasks') }}">All tasks</a>
-</div>
+<a class="button" href="{{ url_for('show_all_tasks') }}">All tasks</a>
 
 {% endblock content%} 
