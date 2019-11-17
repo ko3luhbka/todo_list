@@ -3,11 +3,12 @@
 {% block subtitle %}All tasks{% endblock subtitle%}
 {% block content %}
 {% if tasks %}
-    <div class="tasks_container">tasks container
+    <div class="tasks_container">
     {% for task in tasks %}
         {% set task_name, task_status = task %}
         <div class="task">
-            <p>{{ task_name }}</p>
+            <p>Task: {{ task_name }}</p>
+            <hr/>
             <p>Status: {{ task_status }}</p>
             <div class="button_container">
                 <a class="button"
@@ -21,7 +22,7 @@
 {% else %}
     <h3> There are currently no tasks </h3>
 {% endif %}
-        <a class="button new_task_button" 
-        href="{{ url_for('add_new_task') }}">Add new task</a>
+        <a class="button bottom_button" 
+            href="{{ url_for('add_new_task') }}">Add new task</a>
     </div>
 {% endblock content%}

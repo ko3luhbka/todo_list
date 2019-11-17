@@ -14,11 +14,11 @@
 </head>
 
 <body>
-    <div class="header">Header
-        <h2>{% block header %}Simple TODO application{% endblock header%}</h2>
+    <div class="header">
+        <h1>{% block header %}Simple ToDo app{% endblock header%}</h1>
     </div>
 
-    <h3>{% block subtitle %}{% endblock subtitle%}</h3>
+    <h2>{% block subtitle %}{% endblock subtitle%}</h2>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -28,17 +28,8 @@
         {% endif %}
     {% endwith %}
 
-    <div class="content">Content
-        
-            {% block content %}{% endblock content%}
-        </div>
-
-    </div>
-
-    <div class="footer">Footer
-        {% block footer %}
-        &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
-        {% endblock footer%}
+    <div class="content">
+        {% block content %}{% endblock content%}
     </div>
 </body>
 </html>
