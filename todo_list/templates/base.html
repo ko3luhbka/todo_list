@@ -14,18 +14,19 @@
 </head>
 
 <body>
-    <div class="header">
-        <h1>{% block header %}Simple ToDo app{% endblock header%}</h1>
-    </div>
+    <h1>{% block header %}Simple ToDo app{% endblock header%}</h1>
 
     <h2>{% block subtitle %}{% endblock subtitle%}</h2>
 
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        <div class="message">
         {% if messages %}
-            {% for message in messages %}
-                <div class="info_msg">{{ message }}</div>
+            {% for category, message in messages %}
+                <!-- `category` possible values: 'message', 'error' -->
+                <div class="{{ category }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
+        </div>
     {% endwith %}
 
     <div class="content">

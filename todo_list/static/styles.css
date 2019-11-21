@@ -13,9 +13,9 @@ body {
     margin: 10px auto;
   }
 
-.header {
+h1 {
     background-color: #EEEEEE;
-    height: 100px;
+    padding: 10px;
 }
 
 .tasks_container {
@@ -61,12 +61,10 @@ p, h1, h2, label {
     margin: 10px;
 }
 
-.error_msg {
+.error {
     color: red;
-    font-size: 14px;
 }
 
-.info_msg {
+.message {
     color: green;
-    font-size: 14px;
 }
