@@ -1,86 +1,48 @@
 import logging
-import os
 import sqlite3
-from typing import Optional, Union
 
-from todo_list.todo_task import TaskStatus
+import click
+
+from flask import current_app, g
+from flask.cli import with_appcontext
 
 
-class QueryDB:
-    """Class contains SQLite database query methods."""
-
-    def __init__(self):
-        self.db_path = os.path.join(os.path.dirname(__file__), "todo.db")
+def query_db(query: str, args=(), one=False):
+    with get_db() as db:
         try:
-            self.db_connection = self._connect_to_db()
-            self.db_cursor = self.db_connection.cursor()
-        except sqlite3.DatabaseError:
-            logging.exception("Database connection error")
+            cur = db.execute(query, args)
+            rv = cur.fetchall()
+            if one:
+                return rv[0] if rv else None
+            return rv
+        except sqlite3.DatabaseError as err:
+            logging.exception(err)
+            return err
 
-    def add_task(self, task: str) -> Union[dict, str]:
-        """Add new todo list task."""
-        logging.info("Adding task [%s]", task)
-        try:
-            self.db_cursor.execute(
-                "INSERT INTO tasks(task, status) VALUES(?,?)",
-                (task, TaskStatus.not_started.value),
-            )
-            self.db_connection.commit()
-            return {"task": task, "status": TaskStatus.not_started.value}
-        except sqlite3.IntegrityError:
-            err_msg = "Error: task '{0}' already exists!".format(task)
-            logging.exception(err_msg)
-            return err_msg
 
-    def get_all_tasks(self) -> Optional[dict]:
-        """Get all todo list tasks."""
-        logging.info("Getting all tasks")
-        try:
-            self.db_cursor.execute("SELECT * FROM tasks")
-            rows = self.db_cursor.fetchall()
-            return {"count: ": len(rows), "tasks": rows}
-        except sqlite3.DatabaseError:
-            logging.exception("Error while getting all tasks")
-            return None
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(current_app.config['DATABASE'])
+        g.db.row_factory = sqlite3.Row
+    return g.db
 
-    def get_task(self, task: str) -> Optional[dict]:
-        """Get one todo list task by name."""
-        logging.info("Getting task [%s]", task)
-        try:
-            self.db_cursor.execute(
-                f"SELECT status FROM tasks WHERE task='{task}'"
-            )
-            return self.db_cursor.fetchone()[0]
-        except sqlite3.DatabaseError:
-            logging.exception("Error while getting task {0}", task)
-            return None
 
-    def update_status(self, task: str, status: str) -> Optional[dict]:
-        """Update todo list task status."""
-        logging.info("Updating status of task [%s] to [%s]", task, status)
-        try:
-            self.db_cursor.execute(
-                "UPDATE tasks SET status=? WHERE task=?",
-                (status, task),
-            )
-            self.db_connection.commit()
-            return {task: status}
-        except sqlite3.DatabaseError:
-            logging.exception("Error while updating status of task '{0}'", task)
-            return None
+def close_db():
+    db = g.pop('db', None)
 
-    def delete_task(self, task: str) -> Optional[dict]:
-        """Delete task by name."""
-        logging.info("Deleting task [%s]", task)
-        try:
-            self.db_cursor.execute("DELETE FROM tasks WHERE task=?", (task,))
-            self.db_connection.commit()
-            return {"task": task}
-        except sqlite3.DatabaseError:
-            logging.exception("Error while deleting task '{0}'", task)
-            return None
+    if db is not None:
+        db.close()
 
-    def _connect_to_db(self):
-        # It's safe to set `check_same_thread` argument to False because
-        # we work in single thread
-        return sqlite3.connect(self.db_path, check_same_thread=False)
+
+def init_db():
+    db = get_db()
+    with current_app.open_resource('schema.sql') as f:
+        db.cursor().executescript(f.read().decode('utf-8'))
+
+
+@click.command('init-db')
+@with_appcontext
+def init_db_command():
+    """Clear the existing data and create new tables."""
+    init_db()
+    click.echo('Initialized the database.')

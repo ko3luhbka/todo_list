@@ -1,100 +1,106 @@
 import logging
+import sqlite3
 
-from flask import flash, render_template, request
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 
-from todo_list import app
-from todo_list.db_utils import QueryDB
+from todo_list.db_utils import query_db
 from todo_list.forms import AddToDoTaskForm, UpdateStatusForm
 from todo_list.todo_task import TaskStatus
 
-db = QueryDB()
+app = current_app
 
 
-@app.route("/tasks/all")
+@app.route('/tasks/all')
 def show_all_tasks():
     """Show all todo list tasks"""
-    query_result = db.get_all_tasks()
-
-    return render_template(
-        "all_tasks.html",
-        tasks=query_result["tasks"],
-    )
+    all_tasks = query_db(query='SELECT * FROM tasks')
+    return render_template('all_tasks.html', tasks=all_tasks)
 
 
-@app.route("/tasks/new", methods=["GET", "POST"])
+@app.route('/tasks/new', methods=['GET', 'POST'])
 def add_new_task():
     """Add new todo list task"""
     form = AddToDoTaskForm()
     if form.validate_on_submit():
         task = form.task.data
-        query_result = db.add_task(task)
-        if isinstance(query_result, dict):
-            flash(f"Task '{task}' was added successfuly")
-        elif isinstance(query_result, str):
-            flash(query_result, category='error')
-        return render_template(
-            "all_tasks.html",
-            tasks=db.get_all_tasks()["tasks"],
+        logging.info("Inserting task '%s'", task)
+        query_result = query_db(
+            query='INSERT INTO tasks (task, status) VALUES (?, ?)',
+            args=(task, TaskStatus.not_started.value),
+            one=True,
         )
+
+        # `fetchall()` returns empty list
+        if query_result is None:
+            flash(f"Task '{task}' was added successfuly")
+            return redirect(url_for('show_all_tasks'))
+
+        elif isinstance(query_result, sqlite3.IntegrityError):
+            flash(
+                "Error: task '{0}' already exists!".format(task),
+                category='error',
+            )
+
     logging.info(form.errors)
-    return render_template(
-        "add_task.html",
-        form=form,
-    )
+    return render_template('add_task.html', form=form)
 
 
-@app.route("/tasks/update/<task_name>", methods=["GET", "POST"])
+@app.route('/tasks/update/<task_name>', methods=['GET', 'POST'])
 def update_status(task_name):
     """Update todo list task status"""
-    current_status = db.get_task(task_name)
+    current_status = query_db(
+        query='SELECT status FROM tasks WHERE task=?',
+        args=(task_name,),
+        one=True,
+    )['status']
     form = UpdateStatusForm(status=TaskStatus(current_status).name)
 
-    if request.method == "GET":
+    if request.method == 'GET':
         logging.info(
-            "Current status of task [%s]: [%s]",
+            'Current status of task [%s]: [%s]',
             task_name,
             current_status,
         )
         return render_template(
-            "update_status.html",
+            'update_status.html',
             form=form,
             task_name=task_name,
         )
 
-    if request.method == "POST":
+    if request.method == 'POST':
         new_status = TaskStatus[form.status.data].value
         if new_status == current_status:
             logging.info(
-                "Status of task [%s] didnt change: [%s]",
+                "Status of task [%s] hasn't changed: [%s]",
                 task_name,
                 current_status,
             )
         else:
             logging.info(
-                "New status of task [%s]: [%s]",
+                'New status of task [%s]: [%s]',
                 task_name,
                 new_status,
             )
-            db.update_status(
-                task_name,
-                new_status,
+            query_db(
+                'UPDATE tasks SET status=? WHERE task=?',
+                (new_status, task_name),
             )
             flash(f"The status of task '{task_name}' is set to '{new_status}'")
 
-        return render_template(
-            "all_tasks.html",
-            tasks=db.get_all_tasks()["tasks"],
-        )
+        return redirect(url_for('show_all_tasks'))
 
 
-@app.route("/tasks/delete/<task_name>")
+@app.route('/tasks/delete/<task_name>')
 def delete_task(task_name):
     """Delete todo list task"""
-
-    db.delete_task(task_name)
+    query_db('DELETE FROM tasks WHERE task=?', (task_name,), one=True)
     flash(f"Task '{task_name}' was deleted successfuly")
 
-    return render_template(
-        "all_tasks.html",
-        tasks=db.get_all_tasks()["tasks"]
-    )
+    return redirect(url_for('show_all_tasks'))
