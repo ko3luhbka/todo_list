@@ -1,14 +1,13 @@
 import logging
 
-from flask import flash, render_template, request
+from flask import current_app, flash, render_template, request
 
-from todo_list import app
 from todo_list.db_utils import QueryDB
 from todo_list.forms import AddToDoTaskForm, UpdateStatusForm
 from todo_list.todo_task import TaskStatus
 
+app = current_app
 db = QueryDB()
-
 
 @app.route("/tasks/all")
 def show_all_tasks():
