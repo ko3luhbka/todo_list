@@ -5,3 +5,4 @@ __pycache__
 *.log
 lint.out
 .DS_Store
+instance/
