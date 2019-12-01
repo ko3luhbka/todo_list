@@ -1,6 +1,9 @@
 import logging
 import os
 import sqlite3
+
+from flask import current_app
+
 from typing import Optional, Union
 
 from todo_list.todo_task import TaskStatus
@@ -10,7 +13,7 @@ class QueryDB:
     """Class contains SQLite database query methods."""
 
     def __init__(self):
-        self.db_path = os.path.join(os.path.dirname(__file__), "todo.db")
+        self.db_path = current_app.config['DATABASE']
         try:
             self.db_connection = self._connect_to_db()
             self.db_cursor = self.db_connection.cursor()
